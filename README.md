@@ -6,6 +6,9 @@ will hopefully change in the future, but `interpolate_idents!` sloppily solves
 a side effect of the currently lacking macro system *today*.
 
 ```rust
+#![feature(plugin)]
+#![plugin(interpolate_idents)]
+
 macro_rules! make_fn {
     ($x:ident) => ( interpolate_idents! {
         fn [my_ $x _fn]() -> u32 { 1000 }
@@ -13,7 +16,8 @@ macro_rules! make_fn {
 }
 ```
 
-`make_fn!(favorite);` is equivalent to `fn my_favorite_fn() -> u32 { 1000 }`.
+Now `make_fn!(favorite);` is equivalent to
+`fn my_favorite_fn() -> u32 { 1000 }`.
 
 In short, surround multiple space-separated identifiers (or macro identifer
 variables) with square brackets to concatenate the identifiers. Check
