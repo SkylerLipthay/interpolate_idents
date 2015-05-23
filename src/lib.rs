@@ -39,8 +39,13 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                     }
                 }
 
-                let new_ident = token::str_to_ident(&new_ident[..]);
-                Some(TtToken(new_span.unwrap(), Token::Ident(new_ident, IdentStyle::Plain)))
+                match new_span {
+                    Some(s) => {
+                        let new_ident = token::str_to_ident(&new_ident[..]);
+                        Some(TtToken(s, Token::Ident(new_ident, IdentStyle::Plain)))
+                    },
+                    None => None
+                }
             },
             _ => None,
         }
