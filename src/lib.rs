@@ -33,7 +33,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                                 Some(ref mut s) => { s.hi = span.hi; },
                                 None => { new_span = Some(span.clone()); },
                             }
-                            new_ident.push_str(ident.name.as_str());
+                            new_ident.push_str(&ident.name.as_str());
                         },
                         _ => return None,
                     }
