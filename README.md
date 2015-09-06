@@ -25,3 +25,7 @@ variables) with square brackets to concatenate the identifiers. Check
 
 This plugin was quickly hacked together. It is likely not performant and most
 certainly not readable.
+
+## Crate upkeep
+
+I'm not actively developing on nightly, so I haven't been using this plugin too often. I understand that `libsyntax` is a fickle beast, so please file an issue or PR if `interpolate_idents` fails to compile on the latest nightly!
