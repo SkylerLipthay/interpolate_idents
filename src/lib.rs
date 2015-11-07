@@ -5,7 +5,7 @@ extern crate syntax;
 
 use rustc::plugin::Registry;
 use std::rc::Rc;
-use syntax::ast::TokenTree::{self, TtToken};
+use syntax::ast::TokenTree;
 use syntax::codemap::Span;
 use syntax::ext::base::{ExtCtxt, MacResult};
 use syntax::parse::token::{self, DelimToken, Token, IdentStyle};
@@ -28,7 +28,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
 
                 for token in tts.iter() {
                     match token {
-                        &TtToken(ref span, Token::Ident(ref ident, IdentStyle::Plain)) => {
+                        &TokenTree::Token(ref span, Token::Ident(ref ident, IdentStyle::Plain)) => {
                             match new_span {
                                 Some(ref mut s) => { s.hi = span.hi; },
                                 None => { new_span = Some(span.clone()); },
@@ -42,7 +42,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                 match new_span {
                     Some(s) => {
                         let new_ident = token::str_to_ident(&new_ident[..]);
-                        Some(TtToken(s, Token::Ident(new_ident, IdentStyle::Plain)))
+                        Some(TokenTree::Token(s, Token::Ident(new_ident, IdentStyle::Plain)))
                     },
                     None => None
                 }
@@ -54,11 +54,11 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
     fn map_tts(tts: &[TokenTree]) -> Vec<TokenTree> {
         tts.iter().map(|t| {
             match t {
-                &TokenTree::TtDelimited(ref s, ref d) => {
+                &TokenTree::Delimited(ref s, ref d) => {
                     match concat_idents(&d.tts, d.delim) {
                         Some(t) => t,
                         None => {
-                            TokenTree::TtDelimited(s.clone(), Rc::new(syntax::ast::Delimited {
+                            TokenTree::Delimited(s.clone(), Rc::new(syntax::ast::Delimited {
                                 delim: d.delim,
                                 open_span: d.open_span,
                                 tts: map_tts(&*d.tts),
@@ -67,8 +67,8 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                         },
                     }
                 },
-                &TokenTree::TtSequence(ref s, ref d) => {
-                    TokenTree::TtSequence(s.clone(), Rc::new(syntax::ast::SequenceRepetition {
+                &TokenTree::Sequence(ref s, ref d) => {
+                    TokenTree::Sequence(s.clone(), Rc::new(syntax::ast::SequenceRepetition {
                         tts: map_tts(&*d.tts),
                         separator: d.separator.clone(),
                         op: d.op,
