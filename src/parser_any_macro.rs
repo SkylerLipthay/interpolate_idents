@@ -5,13 +5,15 @@ use syntax::parse::parser::Parser;
 use syntax::parse::token;
 use syntax::ast;
 use syntax::ptr::P;
+
 use syntax::ext::base::MacResult;
 use syntax::util::small_vector::SmallVector;
+
 
 macro_rules! panictry {
     ($e:expr) => ({
         use std::result::Result::{Ok, Err};
-        use syntax::diagnostic::FatalError;
+        use syntax::errors::FatalError;
         match $e {
             Ok(e) => e,
             Err(FatalError) => panic!(FatalError)
@@ -53,18 +55,18 @@ impl<'a> ParserAnyMacro<'a> {
 
 impl<'a> MacResult for ParserAnyMacro<'a> {
     fn make_expr(self: Box<ParserAnyMacro<'a>>) -> Option<P<ast::Expr>> {
-        let ret = self.parser.borrow_mut().parse_expr_panic();
+        let ret = self.parser.borrow_mut().parse_expr().unwrap();
         self.ensure_complete_parse(true);
         Some(ret)
     }
     fn make_pat(self: Box<ParserAnyMacro<'a>>) -> Option<P<ast::Pat>> {
-        let ret = self.parser.borrow_mut().parse_pat_panic();
+        let ret = self.parser.borrow_mut().parse_pat().unwrap();
         self.ensure_complete_parse(false);
         Some(ret)
     }
     fn make_items(self: Box<ParserAnyMacro<'a>>) -> Option<SmallVector<P<ast::Item>>> {
         let mut ret = SmallVector::zero();
-        while let Some(item) = self.parser.borrow_mut().parse_item_panic() {
+        while let Some(item) = self.parser.borrow_mut().parse_item().unwrap() {
             ret.push(item);
         }
         self.ensure_complete_parse(false);
@@ -92,7 +94,7 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
             let mut parser = self.parser.borrow_mut();
             match parser.token {
                 token::Eof => break,
-                _ => match parser.parse_stmt_nopanic() {
+                _ => match parser.parse_stmt() {
                     Ok(maybe_stmt) => match maybe_stmt {
                         Some(stmt) => ret.push(stmt),
                         None => (),
