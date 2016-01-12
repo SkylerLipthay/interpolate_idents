@@ -43,7 +43,7 @@ impl<'a> ParserAnyMacro<'a> {
     fn ensure_complete_parse(&self, allow_semi: bool) {
         let mut parser = self.parser.borrow_mut();
         if allow_semi && parser.token == token::Semi {
-            panictry!(parser.bump())
+            parser.bump();
         }
         if parser.token != token::Eof {
             let token_str = parser.this_token_to_string();
