@@ -9,7 +9,7 @@ use std::rc::Rc;
 use syntax::ast::TokenTree;
 use syntax::codemap::Span;
 use syntax::ext::base::{ExtCtxt, MacResult};
-use syntax::parse::token::{self, DelimToken, Token, IdentStyle};
+use syntax::parse::token::{self, DelimToken, Token};
 
 mod parser_any_macro;
 
@@ -29,7 +29,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
 
                 for token in tts.iter() {
                     match token {
-                        &TokenTree::Token(ref span, Token::Ident(ref ident, IdentStyle::Plain)) => {
+                        &TokenTree::Token(ref span, Token::Ident(ref ident)) => {
                             match new_span {
                                 Some(ref mut s) => { s.hi = span.hi; },
                                 None => { new_span = Some(span.clone()); },
@@ -43,7 +43,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                 match new_span {
                     Some(s) => {
                         let new_ident = token::str_to_ident(&new_ident[..]);
-                        Some(TokenTree::Token(s, Token::Ident(new_ident, IdentStyle::Plain)))
+                        Some(TokenTree::Token(s, Token::Ident(new_ident)))
                     },
                     None => None
                 }
