@@ -5,8 +5,7 @@ extern crate rustc_plugin;
 extern crate syntax;
 
 use rustc_plugin::Registry;
-use std::rc::Rc;
-use syntax::ast::TokenTree;
+use syntax::tokenstream::TokenTree;
 use syntax::codemap::Span;
 use syntax::ext::base::{ExtCtxt, MacResult};
 use syntax::parse::token::{self, DelimToken, Token};
@@ -59,22 +58,22 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                     match concat_idents(&d.tts, d.delim) {
                         Some(t) => t,
                         None => {
-                            TokenTree::Delimited(s.clone(), Rc::new(syntax::ast::Delimited {
+                            TokenTree::Delimited(s.clone(), syntax::tokenstream::Delimited {
                                 delim: d.delim,
                                 open_span: d.open_span,
                                 tts: map_tts(&*d.tts),
                                 close_span: d.close_span,
-                            }))
+                            })
                         },
                     }
                 },
                 &TokenTree::Sequence(ref s, ref d) => {
-                    TokenTree::Sequence(s.clone(), Rc::new(syntax::ast::SequenceRepetition {
+                    TokenTree::Sequence(s.clone(), syntax::tokenstream::SequenceRepetition {
                         tts: map_tts(&*d.tts),
                         separator: d.separator.clone(),
                         op: d.op,
                         num_captures: d.num_captures,
-                    }))
+                    })
                 },
                 _ => t.clone(),
             }
