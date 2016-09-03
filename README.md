@@ -1,5 +1,7 @@
 # interpolate_idents
 
+**Warning!** This crate uses a procedural macro (known today as a [compiler plugin](https://doc.rust-lang.org/book/compiler-plugins.html)) and can only be used with Rust's [nightly distribution](https://doc.rust-lang.org/book/nightly-rust.html).
+
 You cannot currently define a struct, enum, function, or field using
 `concat_idents!` due to the way macros are parsed by the Rust compiler. This
 will hopefully change in the future, but `interpolate_idents!` sloppily solves
