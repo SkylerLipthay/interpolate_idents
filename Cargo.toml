@@ -1,6 +1,6 @@
 [package]
 name = "interpolate_idents"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Skyler Lipthay <skyler.lipthay@gmail.com>"]
 description = "Useable macro identifier concatenation plugin"
 readme = "README.md"
