@@ -6,10 +6,11 @@ extern crate syntax;
 
 use rustc_plugin::Registry;
 use std::rc::Rc;
+use syntax::ast::Ident;
 use syntax::tokenstream::TokenTree;
 use syntax::codemap::Span;
 use syntax::ext::base::{ExtCtxt, MacResult};
-use syntax::parse::token::{self, DelimToken, Token};
+use syntax::parse::token::{DelimToken, Token};
 
 mod parser_any_macro;
 
@@ -42,7 +43,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
 
                 match new_span {
                     Some(s) => {
-                        let new_ident = token::str_to_ident(&new_ident[..]);
+                        let new_ident = Ident::from_str(&new_ident[..]);
                         Some(TokenTree::Token(s, Token::Ident(new_ident)))
                     },
                     None => None
