@@ -62,9 +62,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                         None => {
                             TokenTree::Delimited(s.clone(), Rc::new(syntax::tokenstream::Delimited {
                                 delim: d.delim,
-                                open_span: d.open_span,
                                 tts: map_tts(&*d.tts),
-                                close_span: d.close_span,
                             }))
                         },
                     }
