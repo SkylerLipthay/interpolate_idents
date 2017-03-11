@@ -67,15 +67,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                         },
                     }
                 },
-                &TokenTree::Sequence(ref s, ref d) => {
-                    TokenTree::Sequence(s.clone(), Rc::new(syntax::tokenstream::SequenceRepetition {
-                        tts: map_tts(&*d.tts),
-                        separator: d.separator.clone(),
-                        op: d.op,
-                        num_captures: d.num_captures,
-                    }))
-                },
-                _ => t.clone(),
+                &TokenTree::Token(..) => t.clone(),
             }
         }).collect()
     }
