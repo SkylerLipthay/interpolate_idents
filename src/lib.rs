@@ -5,9 +5,8 @@ extern crate rustc_plugin;
 extern crate syntax;
 
 use rustc_plugin::Registry;
-use std::rc::Rc;
 use syntax::ast::Ident;
-use syntax::tokenstream::TokenTree;
+use syntax::tokenstream::{TokenStream, TokenTree};
 use syntax::codemap::Span;
 use syntax::ext::base::{ExtCtxt, MacResult};
 use syntax::parse::token::{DelimToken, Token};
@@ -22,15 +21,15 @@ pub fn plugin_registrar(reg: &mut Registry) {
 fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
               _: Span,
               tts: &[TokenTree]) -> Box<MacResult + 'a> {
-    fn concat_idents(tts: &Vec<TokenTree>, delim: DelimToken) -> Option<TokenTree> {
+    fn concat_idents(tts: TokenStream, delim: DelimToken) -> Option<TokenTree> {
         match delim {
             DelimToken::Bracket => {
                 let mut new_ident = String::new();
                 let mut new_span: Option<Span> = None;
 
-                for token in tts.iter() {
+                for token in tts.trees() {
                     match token {
-                        &TokenTree::Token(ref span, Token::Ident(ref ident)) => {
+                        TokenTree::Token(ref span, Token::Ident(ref ident)) => {
                             match new_span {
                                 Some(ref mut s) => { s.hi = span.hi; },
                                 None => { new_span = Some(span.clone()); },
@@ -53,25 +52,27 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
         }
     }
 
-    fn map_tts(tts: &[TokenTree]) -> Vec<TokenTree> {
-        tts.iter().map(|t| {
+    fn map_tts(tts: TokenStream) -> TokenStream {
+        tts.trees().map(|t| {
             match t {
-                &TokenTree::Delimited(ref s, ref d) => {
-                    match concat_idents(&d.tts, d.delim) {
+                TokenTree::Delimited(s, d) => {
+                    match concat_idents(d.tts.clone().into(), d.delim) {
                         Some(t) => t,
                         None => {
-                            TokenTree::Delimited(s.clone(), Rc::new(syntax::tokenstream::Delimited {
+                            TokenTree::Delimited(s, syntax::tokenstream::Delimited {
                                 delim: d.delim,
-                                tts: map_tts(&*d.tts),
-                            }))
+                                tts: map_tts(d.tts.into()).into(),
+                            })
                         },
                     }
                 },
-                &TokenTree::Token(..) => t.clone(),
+                TokenTree::Token(..) => t.clone(),
             }
         }).collect()
     }
 
-    let parser = cx.new_parser_from_tts(&map_tts(tts)[..]);
+    let tts: TokenStream = map_tts(tts.iter().cloned().collect());
+    let tts: Vec<TokenTree> = tts.trees().collect();
+    let parser = cx.new_parser_from_tts(&*tts);
     Box::new(parser_any_macro::ParserAnyMacro::new(parser)) as Box<MacResult>
 }
