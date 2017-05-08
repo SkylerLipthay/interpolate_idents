@@ -83,7 +83,7 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
             let mut parser = self.parser.borrow_mut();
             match parser.token {
                 token::Eof => break,
-                _ => ret.push(panictry!(parser.parse_impl_item()))
+                _ => ret.push(panictry!(parser.parse_impl_item(&mut false)))
             }
         }
         self.ensure_complete_parse(false);
