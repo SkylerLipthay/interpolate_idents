@@ -43,3 +43,21 @@ fn test_brackets() {
     let data = [1; 1];
     assert_eq!(brackets(&data), vec![2, 1, 1]);
 }
+
+
+macro_rules! define_underscore_idents {
+    ($x:ident) => ( interpolate_idents! {
+        fn [_ $x]() -> u32 { 1 }
+        fn [$x _]() -> u32 { 2 }
+        fn [_ $x _ $x _]() -> u32 { 3 }
+    } )
+}
+
+define_underscore_idents!(bar);
+
+#[test]
+fn test_underscores() {
+    assert_eq!(_bar(), 1);
+    assert_eq!(bar_(), 2);
+    assert_eq!(_bar_bar_(), 3);
+}
