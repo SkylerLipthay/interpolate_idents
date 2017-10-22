@@ -61,3 +61,20 @@ fn test_underscores() {
     assert_eq!(bar_(), 2);
     assert_eq!(_bar_bar_(), 3);
 }
+
+macro_rules! define_attributes {
+    ($x:ident) => ( interpolate_idents! {
+        #[inline]
+        fn [_ $x]() -> u32 { 1 }
+
+        #[allow(unreachable_code)]
+        fn [_ $x _2]() -> u32 { return 1; 2 }
+    } )
+}
+
+define_attributes!(attr);
+
+#[test]
+fn test_attributes() {
+    assert_eq!(_attr(), 1);
+}

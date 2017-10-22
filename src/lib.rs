@@ -60,7 +60,20 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
     }
 
     fn map_tts(tts: TokenStream) -> TokenStream {
+        // Ignore brackets preceded by a pound symbol (or a pound and an exclamation mark), so as
+        // to allow attributes.
+        let mut is_prev_pound = false;
+
         tts.trees().map(|t| {
+            if is_prev_pound {
+                is_prev_pound = false;
+                return t.clone();
+            }
+
+            if let TokenTree::Token(_, Token::Pound) = t {
+                is_prev_pound = true;
+            }
+
             match t {
                 TokenTree::Delimited(s, d) => {
                     match concat_idents(d.tts.clone().into(), d.delim) {
