@@ -18,7 +18,7 @@ macro_rules! panictry {
             Ok(e) => e,
             Err(mut e) => {
                    e.emit();
-                   panic!(FatalError);
+                   FatalError.raise();
                }
         }
     })
