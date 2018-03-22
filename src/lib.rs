@@ -36,13 +36,6 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                             }
                             new_ident.push_str(&ident.name.as_str());
                         },
-                        TokenTree::Token(ref span, Token::Underscore) => {
-                            match new_span {
-                                Some(ref mut s) => { *s = s.with_hi(span.hi()); },
-                                None => { new_span = Some(span.clone()); },
-                            }
-                            new_ident.push_str("_");
-                        },
                         _ => return None,
                     }
                 }
