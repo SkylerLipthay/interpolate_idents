@@ -29,7 +29,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
 
                 for token in tts.trees() {
                     match token {
-                        TokenTree::Token(ref span, Token::Ident(ref ident)) => {
+                        TokenTree::Token(ref span, Token::Ident(ref ident, _)) => {
                             match new_span {
                                 Some(ref mut s) => { *s = s.with_hi(span.hi()); },
                                 None => { new_span = Some(span.clone()); },
@@ -43,7 +43,7 @@ fn interpolate_idents<'a>(cx: &'a mut ExtCtxt,
                 match new_span {
                     Some(s) => {
                         let new_ident = Ident::from_str(&new_ident[..]);
-                        Some(TokenTree::Token(s, Token::Ident(new_ident)))
+                        Some(TokenTree::Token(s, Token::from_ast_ident(new_ident)))
                     },
                     None => None
                 }
