@@ -1,12 +1,12 @@
 // from src/libsyntax/ext/tt/macro_rules.rs
 
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
 use syntax::parse::parser::Parser;
 use syntax::parse::token;
 use syntax::ast;
 use syntax::ptr::P;
 
-use syntax::ext::base::MacResult;
+use syntax::ext::base::*;
 use syntax::util::small_vector::SmallVector;
 
 
@@ -41,7 +41,7 @@ impl<'a> ParserAnyMacro<'a> {
     /// panic!(); } }` doesn't get picked up by .parse_expr(), but it's
     /// allowed to be there.
     fn ensure_complete_parse(&self, allow_semi: bool) {
-        let mut parser = self.parser.borrow_mut();
+        let mut parser: RefMut<Parser> = self.parser.borrow_mut();
         if allow_semi && parser.token == token::Semi {
             parser.bump();
         }
@@ -51,7 +51,7 @@ impl<'a> ParserAnyMacro<'a> {
                                following",
                               token_str);
             let span = parser.span;
-            parser.span_err(span, &msg[..]);
+            parser.sess.span_diagnostic.span_err(span, &msg[..]);
         }
     }
 }
@@ -83,7 +83,17 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
             let mut parser = self.parser.borrow_mut();
             match parser.token {
                 token::Eof => break,
-                _ => ret.push(panictry!(parser.parse_impl_item(&mut false)))
+                _ => {
+                    let item = panictry!(parser.parse_item()).unwrap();
+                    if let ast::ItemKind::Impl(_, _, _, _, _, _, ref vec) = item.node {
+                        if vec.len() != 1 {
+                            panic!("Expected 1 Implitem");
+                        }
+                        ret.push(vec[0].clone());
+                    } else {
+                        panic!("Expected Implitem");
+                    }
+                },
             }
         }
         self.ensure_complete_parse(false);
