@@ -51,7 +51,7 @@ impl<'a> ParserAnyMacro<'a> {
                                following",
                               token_str);
             let span = parser.span;
-            parser.span_err(span, &msg[..]);
+            parser.sess.span_diagnostic.span_err(span, &msg[..]);
         }
     }
 }
@@ -83,7 +83,17 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
             let mut parser = self.parser.borrow_mut();
             match parser.token {
                 token::Eof => break,
-                _ => ret.push(panictry!(parser.parse_impl_item(&mut false)))
+                _ => {
+                    let item = panictry!(parser.parse_item()).unwrap();
+                    if let ast::ItemKind::Impl(_, _, _, _, _, _, ref vec) = item.node {
+                        if vec.len() != 1 {
+                            panic!("Expected 1 Implitem");
+                        }
+                        ret.push(vec[0].clone());
+                    } else {
+                        panic!("Expected Implitem");
+                    }
+                },
             }
         }
         self.ensure_complete_parse(false);
