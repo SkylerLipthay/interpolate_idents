@@ -1,12 +1,12 @@
 // from src/libsyntax/ext/tt/macro_rules.rs
 
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 use syntax::parse::parser::Parser;
 use syntax::parse::token;
 use syntax::ast;
 use syntax::ptr::P;
 
-use syntax::ext::base::*;
+use syntax::ext::base::MacResult;
 use syntax::util::small_vector::SmallVector;
 
 
@@ -41,7 +41,7 @@ impl<'a> ParserAnyMacro<'a> {
     /// panic!(); } }` doesn't get picked up by .parse_expr(), but it's
     /// allowed to be there.
     fn ensure_complete_parse(&self, allow_semi: bool) {
-        let mut parser: RefMut<Parser> = self.parser.borrow_mut();
+        let mut parser = self.parser.borrow_mut();
         if allow_semi && parser.token == token::Semi {
             parser.bump();
         }
