@@ -7,7 +7,7 @@ extern crate syntax;
 use rustc_plugin::Registry;
 use syntax::ast::Ident;
 use syntax::tokenstream::{TokenStream, TokenTree};
-use syntax::codemap::Span;
+use syntax::source_map::Span;
 use syntax::ext::base::{ExtCtxt, MacResult};
 use syntax::parse::token::{DelimToken, Token};
 
