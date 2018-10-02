@@ -1,6 +1,7 @@
 // from src/libsyntax/ext/tt/macro_rules.rs
 
 use std::cell::RefCell;
+use smallvec::SmallVec;
 use syntax::{
     parse::{
         parser::Parser,
@@ -8,8 +9,7 @@ use syntax::{
     },
     ast,
     ptr::P,
-    ext::base::MacResult,
-    OneVector,
+    ext::base::MacResult
 };
 
 macro_rules! panictry {
@@ -69,8 +69,8 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
         self.ensure_complete_parse(false);
         Some(ret)
     }
-    fn make_items(self: Box<ParserAnyMacro<'a>>) -> Option<OneVector<P<ast::Item>>> {
-        let mut ret = OneVector::new();
+    fn make_items(self: Box<ParserAnyMacro<'a>>) -> Option<SmallVec<[P<ast::Item>; 1]>> {
+        let mut ret = SmallVec::new();
         while let Some(item) = panictry!(self.parser.borrow_mut().parse_item()) {
             ret.push(item);
         }
@@ -79,8 +79,8 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
     }
 
     fn make_impl_items(self: Box<ParserAnyMacro<'a>>)
-                       -> Option<OneVector<ast::ImplItem>> {
-        let mut ret = OneVector::new();
+                       -> Option<SmallVec<[ast::ImplItem; 1]>> {
+        let mut ret = SmallVec::new();
         loop {
             let mut parser = self.parser.borrow_mut();
             match parser.token {
@@ -103,8 +103,8 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
     }
 
     fn make_stmts(self: Box<ParserAnyMacro<'a>>)
-                 -> Option<OneVector<ast::Stmt>> {
-        let mut ret = OneVector::new();
+                 -> Option<SmallVec<[ast::Stmt; 1]>> {
+        let mut ret = SmallVec::new();
         loop {
             let mut parser = self.parser.borrow_mut();
             match parser.token {
