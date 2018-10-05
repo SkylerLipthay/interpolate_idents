@@ -1,5 +1,7 @@
 # interpolate_idents
 
+[![Travis-CI Status]][travis]
+
 **Warning!** This crate uses a procedural macro (known today as a [compiler plugin](https://doc.rust-lang.org/book/compiler-plugins.html)) and can only be used with Rust's [nightly distribution](https://doc.rust-lang.org/book/nightly-rust.html).
 
 You cannot currently define a struct, enum, function, or field using
@@ -31,3 +33,6 @@ certainly not readable.
 ## Crate upkeep
 
 I'm not actively developing on nightly, so I haven't been using this plugin too often. I understand that `libsyntax` is a fickle beast, so please file an issue or PR if `interpolate_idents` fails to compile on the latest nightly!
+
+[travis]: https://travis-ci.org/SkylerLipthay/interpolate_idents
+[Travis-CI Status]: https://travis-ci.org/SkylerLipthay/interpolate_idents.svg?branch=master
