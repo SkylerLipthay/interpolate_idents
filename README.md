@@ -1,5 +1,13 @@
 # interpolate_idents
 
+## Deprecation warning
+
+Because of the introduction of stable procedural macro support in Rust 1.30.0, it is now possible to accomplish what this crate set out to accomplish using entirely stable code. Please try @dtolnay's [`paste`](https://crates.io/crates/paste) crate to see if it can fulfill all of your current use cases. `paste` can be used in stable production environments and is not nearly as prone to breakage between Rust versions.
+
+Ideally, we will deprecate `interpolate_idents` as soon as we are confident that no users of this crate are left behind in the transition to `paste`. Please comment on [issue #45](https://github.com/SkylerLipthay/interpolate_idents/issues/45) or open a new issue with any concerns and personal experiences. Thank you!
+
+## Summary
+
 [![Travis-CI Status]][travis]
 
 **Warning!** This crate uses a procedural macro (known today as a [compiler plugin](https://doc.rust-lang.org/book/compiler-plugins.html)) and can only be used with Rust's [nightly distribution](https://doc.rust-lang.org/book/nightly-rust.html).
