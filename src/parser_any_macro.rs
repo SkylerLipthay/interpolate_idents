@@ -65,7 +65,7 @@ impl<'a> MacResult for ParserAnyMacro<'a> {
         Some(ret)
     }
     fn make_pat(self: Box<ParserAnyMacro<'a>>) -> Option<P<ast::Pat>> {
-        let ret = panictry!(self.parser.borrow_mut().parse_pat());
+        let ret = panictry!(self.parser.borrow_mut().parse_pat(None));
         self.ensure_complete_parse(false);
         Some(ret)
     }
